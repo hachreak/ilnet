@@ -529,13 +529,17 @@ class UBTeacherTrainer(DefaultTrainer):
                 ]
             record_dict.update(new_record_all_unlabel_data)
 
+            # define unsupervised weight regression loss
+            weight_unsup_loss_reg = self.cfg.SEMISUPNET.UNSUP_LOSS_WEIGHT_REG
+
             # weight losses
             loss_dict = {}
             for key in record_dict.keys():
                 if key[:4] == "loss":
                     if key == "loss_rpn_loc_pseudo" or key == "loss_box_reg_pseudo":
                         # pseudo bbox regression <- 0
-                        loss_dict[key] = record_dict[key] * 0
+                        loss_dict[key] = record_dict[key] * \
+                                weight_unsup_loss_reg
                     elif key[-6:] == "pseudo":  # unsupervised loss
                         loss_dict[key] = (
                             record_dict[key] * self.cfg.SEMISUPNET.UNSUP_LOSS_WEIGHT

@@ -38,6 +38,9 @@ def add_ubteacher_config(cfg):
     _C.SEMISUPNET.SUP_LOSS_WEIGHT = 0.5
     _C.SEMISUPNET.LOSS_WEIGHT_TYPE = "standard"
 
+    # loss regression
+    _C.SEMISUPNET.UNSUP_LOSS_WEIGHT_REG = 0.
+
     # dataloader
     # supervision level
     _C.DATALOADER.SUP_PERCENT = 100.0  # 5 = 5% dataset as labeled set
