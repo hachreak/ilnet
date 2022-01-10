@@ -4,9 +4,14 @@ from torch import nn
 from torch.nn import functional as F
 
 from detectron2.modeling.roi_heads.fast_rcnn import (
-    FastRCNNOutputLayers,
-    FastRCNNOutputs,
+    FastRCNNOutputLayers
 )
+
+try:
+    from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputs
+except ImportError:
+    from .backports import FastRCNNOutputs
+
 
 # focal loss
 class FastRCNNFocaltLossOutputLayers(FastRCNNOutputLayers):
