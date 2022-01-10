@@ -1,0 +1,3 @@
+_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml"
+SEMISUPNET:
+  FILTER_WITH_BBOX_IOU: False
