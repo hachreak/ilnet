@@ -16,6 +16,7 @@ from detectron2.utils.events import EventStorage
 from detectron2.evaluation import COCOEvaluator, verify_results
 from detectron2.data.dataset_mapper import DatasetMapper
 from detectron2.engine import hooks
+from detectron2.structures import pairwise_iou
 from detectron2.structures.boxes import Boxes
 from detectron2.structures.instances import Instances
 from detectron2.utils.env import TORCH_VERSION
@@ -433,6 +434,47 @@ class UBTeacherTrainer(DefaultTrainer):
             unlabel_datum["instances"] = lab_inst
         return unlabled_data
 
+    def eval_label(self, gtlab, newlab):
+
+        def get_err(iou, gt_cls, new_cls, threshold):
+            filt = (iou>threshold) & (iou<threshold+0.1)
+            b_filt = len(iou[filt])
+            c_wrong = len(gt_cls[filt & (gt_cls != new_cls)])
+            return b_filt, c_wrong
+
+        logger = logging.getLogger('fvcore.common.checkpoint')
+        for gt, new in zip(gtlab, newlab):
+            if len(new) > 0:
+                b1 = gt["instances"].gt_boxes
+                b1.tensor = b1.tensor.cuda()
+                c1 = gt["instances"].gt_classes.cuda()
+                iou, idx = pairwise_iou(b1, new.gt_boxes).max(1)
+                b_wrong = len(iou[iou<0.5])
+                b_wronger = len(iou[iou<0.3])
+                b_wrongest = len(iou[iou<0.1])
+                c_wrong = b_wrong + len(c1[iou>=0.5][c1[iou>=0.5] != new.gt_classes[idx][iou>=0.5]])
+                count = float(len(iou))
+                # get error per iou range
+                err = sum([get_err(iou, c1, new.gt_classes[idx], th/10.) for th in range(0, 10)], ())
+                debug = ' '.join([str(s) for s in ["eval_labels", str(self.iter), str(len(iou)),
+                    b_wrongest, '{:.2f}'.format(b_wrongest * 100 / count),
+                    b_wronger, '{:.2f}'.format(b_wronger * 100 / count),
+                    b_wrong, '{:.2f}'.format(b_wrong * 100 / count),
+                    c_wrong, '{:.2f}'.format(c_wrong * 100 / count),
+                    ' - ', ' '.join([str(i) for i in err]), 'more']])
+                logger.info(debug)
+                b1.tensor = b1.tensor.cpu()
+                c1 = c1.cpu()
+            else:
+                count = str(len(gt["instances"].gt_boxes))
+                debug = ' '.join([str(s) for s in ["eval_labels", str(self.iter), count,
+                    count, 100.,
+                    count, 100.,
+                    count, 100.,
+                    count, 100.,
+                    ' - ', ' '.join(['0' for i in range(20)]), 'zero']])
+                logger.info(debug)
+
     # =====================================================
     # =================== Training Flow ===================
     # =====================================================
@@ -500,6 +542,12 @@ class UBTeacherTrainer(DefaultTrainer):
                 proposals_roih_unsup_k, cur_threshold, "roih", "thresholding"
             )
             joint_proposal_dict["proposals_pseudo_roih"] = pesudo_proposals_roih_unsup_k
+
+            # debug pseudo labels
+            if self.cfg.SEMISUPNET.DEBUG_BBOX_LABELS:
+                self.eval_label(
+                    unlabel_data_q,
+                    joint_proposal_dict["proposals_pseudo_roih"])
 
             #  add pseudo-label to unlabeled data
             unlabel_data_q = self.remove_label(unlabel_data_q)

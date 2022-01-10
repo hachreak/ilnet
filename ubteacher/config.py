@@ -41,6 +41,18 @@ def add_ubteacher_config(cfg):
     # loss regression
     _C.SEMISUPNET.UNSUP_LOSS_WEIGHT_REG = 0.
 
+    # bbox iou branch
+    _C.SEMISUPNET.IOU_PRED_THRESHOLD = 0.5
+    _C.SEMISUPNET.IOU_PRED_INFERENCE_THRESHOLD = 0.25
+    _C.SEMISUPNET.WITH_IOU_PRED = False
+    _C.SEMISUPNET.WITH_IOU_PRED_ELU = False
+    _C.SEMISUPNET.FILTER_WITH_BBOX_IOU = True
+    _C.SEMISUPNET.WITH_SCORE_VALUES = True
+    _C.SEMISUPNET.WITH_REGR_VALUES = True
+    _C.SEMISUPNET.WITH_BBOX_IOU_REGRES = False
+    _C.SEMISUPNET.USE_SMOOTHL1 = False
+    _C.SEMISUPNET.DEBUG_BBOX_LABELS = False
+
     # dataloader
     # supervision level
     _C.DATALOADER.SUP_PERCENT = 100.0  # 5 = 5% dataset as labeled set
