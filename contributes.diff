@@ -1,0 +1,1153 @@
+diff --git a/README.md b/README.md
+index 08239f1..f413719 100644
+--- a/README.md
++++ b/README.md
+@@ -1,173 +1,69 @@
+-# Unbiased Teacher for Semi-Supervised Object Detection
++## Improving Localization for Semi-Supervised Object Detection
+ 
+-<img src="teaser/pytorch-logo-dark.png" width="10%"> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
++### Installation
+ 
+-This is the PyTorch implementation of our paper: <br>
+-**Unbiased Teacher for Semi-Supervised Object Detection**<br>
+-[Yen-Cheng Liu](https://ycliu93.github.io/), [Chih-Yao Ma](https://chihyaoma.github.io/), [Zijian He](https://research.fb.com/people/he-zijian/), [Chia-Wen Kuo](https://sites.google.com/view/chiawen-kuo/home), [Kan Chen](https://kanchen.info/), [Peizhao Zhang](https://scholar.google.com/citations?user=eqQQkM4AAAAJ&hl=en), [Bichen Wu](https://scholar.google.com/citations?user=K3QJPdMAAAAJ&hl=en), [Zsolt Kira](https://www.cc.gatech.edu/~zk15/), [Peter Vajda](https://sites.google.com/site/vajdap)<br>
+-International Conference on Learning Representations (ICLR), 2021 <br>
++See [unbiased-teacher](https://github.com/facebookresearch/unbiased-teacher/tree/ba543ed)
++official pages to know the installation procedure.
+ 
+-[[arXiv](https://arxiv.org/abs/2102.09480)] [[OpenReview](https://openreview.net/forum?id=MJIve1zgR_)] [[Project](https://ycliu93.github.io/projects/unbiasedteacher.html)]
++### Models
+ 
+-<p align="center">
+-<img src="teaser/figure_teaser.gif" width="85%">
+-</p>
++Most important files.
+ 
+-# Installation
++- [trainer.py](ubteacher/engine/trainer.py)
++- [fast_rcnn](ubteacher/modeling/roi_heads/fast_rcnn.py) which contains the
++  BBox IoU classification branch.
+ 
+-## Prerequisites
++## Experiments
+ 
+-- Linux or macOS with Python ≥ 3.6
+-- PyTorch ≥ 1.5 and torchvision that matches the PyTorch installation.
++The following configuration files have been used to run each experiment:
+ 
+-## Install PyTorch in Conda env
++Table 1 / Figure 3a:
+ 
+-```shell
+-# create conda env
+-conda create -n detectron2 python=3.6
+-# activate the enviorment
+-conda activate detectron2
+-# install PyTorch >=1.5 with GPU
+-conda install pytorch torchvision -c pytorch
+-```
++| Row | Beta | AP |
++| :--: | :--: | :--: |
++|   | [base](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-base.yaml)  | 31.027 |
++| 0 | [0.5](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_4.yaml)   | 31.775 |
++| 1 | [1](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7.yaml)       | 31.947 |
++| 2 | [2](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_2.yaml)     | 31.754 |
++| 3 | [4](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_3.yaml)     | 30.445 |
+ 
+-## Build Detectron2 from Source
+ 
+-Follow the [INSTALL.md](https://github.com/facebookresearch/detectron2/blob/master/INSTALL.md) to install Detectron2.
++Table 2 / Figure 3c:
+ 
+-## Dataset download
++| Row | Model | AP |
++| :--: | :--: | :--: |
++| 1 | [UT](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-base.yaml)                 | 31.027 |
++| 2 | [Ours (with filter)](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_4.yaml) | 31.605 |
++| 3 | [Ours (w/out filter)](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7.yaml)  | 31.509 |
+ 
+-1. Download COCO dataset
++Table 3 / Figure 3d:
+ 
+-```shell
+-# download images
+-wget http://images.cocodataset.org/zips/train2017.zip
+-wget http://images.cocodataset.org/zips/val2017.zip
++| Row | Mu | AP |
++| :--: | :--: | :--: |
++| 1 | [0.5](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_2.yaml)   | 31.199 |
++| 2 | [0.6](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28.yaml)     | 31.128 |
++| 3 | [0.7](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_3.yaml)   | 31.461 |
++| 4 | [0.75](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml)  | 31.604 |
++| 5 | [0.8](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_4.yaml)   | 31.336 |
++| 6 | [0.9](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_5.yaml)   | 27.125 |
+ 
+-# download annotations
+-wget http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+-```
++Table 4:
+ 
+-2. Organize the dataset as following:
++| Row | Theta | AP |
++| :--: | :--: | :--: |
++| 0 | [0.3](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_4.yaml)  | 31.404 |
++| 1 | [0.4](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_3.yaml)  | 31.630 |
++| 2 | [0.5](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml)  | 31.604 |
++| 3 | [0.6](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31.yaml)    | 31.158 |
++| 4 | [0.7](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_2.yaml)  | 30.649 |
+ 
+-```shell
+-unbiased_teacher/
+-└── datasets/
+-    └── coco/
+-        ├── train2017/
+-        ├── val2017/
+-        └── annotations/
+-        	├── instances_train2017.json
+-        	└── instances_val2017.json
+-```
++Table 5:
+ 
+-## Training
+-
+-- Train the Unbiased Teacher under 1% COCO-supervision
+-
+-```shell
+-python train_net.py \
+-      --num-gpus 8 \
+-      --config configs/coco_supervision/faster_rcnn_R_50_FPN_sup1_run1.yaml \
+-       SOLVER.IMG_PER_BATCH_LABEL 16 SOLVER.IMG_PER_BATCH_UNLABEL 16
+-```
+-
+-- Train the Unbiased Teacher under 2% COCO-supervision
+-
+-```shell
+-python train_net.py \
+-      --num-gpus 8 \
+-      --config configs/coco_supervision/faster_rcnn_R_50_FPN_sup2_run1.yaml \
+-       SOLVER.IMG_PER_BATCH_LABEL 16 SOLVER.IMG_PER_BATCH_UNLABEL 16
+-```
+-
+-- Train the Unbiased Teacher under 5% COCO-supervision
+-
+-```shell
+-python train_net.py \
+-      --num-gpus 8 \
+-      --config configs/coco_supervision/faster_rcnn_R_50_FPN_sup5_run1.yaml \
+-       SOLVER.IMG_PER_BATCH_LABEL 16 SOLVER.IMG_PER_BATCH_UNLABEL 16
+-```
+-
+-- Train the Unbiased Teacher under 10% COCO-supervision
+-
+-```shell
+-python train_net.py \
+-      --num-gpus 8 \
+-      --config configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1.yaml \
+-       SOLVER.IMG_PER_BATCH_LABEL 16 SOLVER.IMG_PER_BATCH_UNLABEL 16
+-```
+-
+-## Resume the training
+-
+-```shell
+-python train_net.py \
+-      --resume \
+-      --num-gpus 8 \
+-      --config configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1.yaml \
+-       SOLVER.IMG_PER_BATCH_LABEL 16 SOLVER.IMG_PER_BATCH_UNLABEL 16 MODEL.WEIGHTS <your weight>.pth
+-```
+-
+-## Evaluation
+-
+-```shell
+-python train_net.py \
+-      --eval-only \
+-      --num-gpus 8 \
+-      --config configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1.yaml \
+-       SOLVER.IMG_PER_BATCH_LABEL 16 SOLVER.IMG_PER_BATCH_UNLABEL 16 MODEL.WEIGHTS <your weight>.pth
+-```
+-
+-## Model Weights
+-
+-For the following results, we use 16 labeled images + 16 unlabeled images on 8 GPUs (single node).
+-
+-Faster-RCNN:
+-
+-|   Model      |   Supervision  |             Batch size              |  AP   |  Model Weights |
+-| :----------: | :------------: | :---------------------------------: | :---: |:-----: |
+-| R50-FPN      |       1%       | 16 labeled img + 16 unlabeled imgs  | 20.16 | [link](https://drive.google.com/file/d/1NQs5SrQ2-ODEVn_ZdPU_2xv9mxdY6MPq/view?usp=sharing) |
+-| R50-FPN      |       2%       | 16 labeled img + 16 unlabeled imgs  | 24.16 | [link](https://drive.google.com/file/d/12q-LB4iDvgXGW50Q-bYOahpalUvO3SIa/view?usp=sharing) |
+-| R50-FPN      |       5%       | 16 labeled img + 16 unlabeled imgs  | 27.84 | [link](https://drive.google.com/file/d/1IJQeRP9wHPU0J27YTea-y3lIW96bMAUu/view?usp=sharing) |
+-| R50-FPN      |      10%       | 16 labeled img + 16 unlabeled imgs  | 31.39 | [link](https://drive.google.com/file/d/1U9tnJGvzRFSOnOfIHOnelFmlvEfyayha/view?usp=sharing) |
+-
+-## FAQ
+-
+-1. Q: Using the lower batch size and fewer GPUs cannot achieve the results presented in the paper?
+-
+-- A: We train the model with 32 labeled images + 32 unlabeled images per batch for the results presented in the paper, and using the lower batch size leads to lower accuracy. For example, in the 1% COCO-supervision setting, the model trained with 16 labeled images + 16 unlabeled images achieves 19.9 AP as shown in the following table.
+-
+-|   Experiment GPUs    |         Batch size per node         |             Batch size              |  AP   |
+-| :------------------: | :---------------------------------: | :---------------------------------: | :---: |
+-| 8 GPUs/node; 4 nodes |  8 labeled imgs + 8 unlabeled imgs  | 32 labeled img + 32 unlabeled imgs  | 20.75 |
+-| 8 GPUs/node; 1 node  | 16 labeled imgs + 16 unlabeled imgs | 16 labeled imgs + 16 unlabeled imgs | 20.16 |
+-
+-## Citing Unbiased Teacher
+-
+-If you use Unbiased Teacher in your research or wish to refer to the results published in the paper, please use the following BibTeX entry.
+-
+-```BibTeX
+-@inproceedings{liu2021unbiased,
+-    title={Unbiased Teacher for Semi-Supervised Object Detection},
+-    author={Liu, Yen-Cheng and Ma, Chih-Yao and He, Zijian and Kuo, Chia-Wen and Chen, Kan and Zhang, Peizhao and Wu, Bichen and Kira, Zsolt and Vajda, Peter},
+-    booktitle={Proceedings of the International Conference on Learning Representations (ICLR)},
+-    year={2021},
+-}
+-```
+-
+-Also, if you use Detectron2 in your research, please use the following BibTeX entry.
+-
+-```BibTeX
+-@misc{wu2019detectron2,
+-  author =       {Yuxin Wu and Alexander Kirillov and Francisco Massa and
+-                  Wan-Yen Lo and Ross Girshick},
+-  title =        {Detectron2},
+-  howpublished = {\url{https://github.com/facebookresearch/detectron2}},
+-  year =         {2019}
+-}
+-```
+-
+-## License
+-
+-This project is licensed under [MIT License](LICENSE), as found in the LICENSE file.
++| Row | L<sub>reg</sub><sup>unsup</sup> | x<sup>sh</sup> | scores | deltas| Model | AP |
++| :--: | :--: | :--: | :--: | :--: | :--: | :--: |
++| 1 |   |   |   |   | [model](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-base.yaml)   | 31.027 |
++| 2 | x |   |   |   | [model](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7.yaml)     | 31.947 |
++| 3 | x | x |   |   | [model](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_3.yaml)  | 31.754 |
++| 4 | x | x | x |   | [model](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_2.yaml)  | 32.166 |
++| 5 | x | x | x | x | [model](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36.yaml)    | 31.923 |
++| 6 |   | x | x | x | [model](configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_3.yaml)  | 31.630 |
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-base.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-base.yaml
+new file mode 100644
+index 0000000..836742f
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-base.yaml
+@@ -0,0 +1,7 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1.yaml"
++SOLVER:
++  IMG_PER_BATCH_LABEL: 12
++  IMG_PER_BATCH_UNLABEL: 12
++  BASE_LR: 0.0075
++TEST:
++  EVAL_PERIOD: 10000
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml
+new file mode 100644
+index 0000000..03e4c5b
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml
+@@ -0,0 +1,5 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.75
++  IOU_PRED_INFERENCE_THRESHOLD: 0.5
++  WITH_IOU_PRED: True
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_8.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_8.yaml
+new file mode 100644
+index 0000000..3069857
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_8.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_5.yaml"
++SEMISUPNET:
++  FILTER_WITH_BBOX_IOU: False
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml
+new file mode 100644
+index 0000000..d59f8be
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml
+@@ -0,0 +1,6 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.75
++  IOU_PRED_INFERENCE_THRESHOLD: 0.5
++  WITH_IOU_PRED: True
++  WITH_IOU_PRED_ELU: True
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v22.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v22.yaml
+new file mode 100644
+index 0000000..3ff8a72
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v22.yaml
+@@ -0,0 +1,6 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.75
++  IOU_PRED_INFERENCE_THRESHOLD: 0.5
++  WITH_IOU_PRED: True
++  WITH_BBOX_IOU_REGRES: True
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v22_2.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v22_2.yaml
+new file mode 100644
+index 0000000..ac0b0e3
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v22_2.yaml
+@@ -0,0 +1,8 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.75
++  IOU_PRED_INFERENCE_THRESHOLD: 0.5
++  #DEBUG_BBOX_LABELS: True
++  WITH_IOU_PRED: True
++  WITH_BBOX_IOU_REGRES: True
++  USE_SMOOTHL1: True
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28.yaml
+new file mode 100644
+index 0000000..16d0c70
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.6
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_2.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_2.yaml
+new file mode 100644
+index 0000000..71dc5b8
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_2.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.5
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_3.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_3.yaml
+new file mode 100644
+index 0000000..fe95af7
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_3.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.7
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_4.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_4.yaml
+new file mode 100644
+index 0000000..beea2d7
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_4.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.8
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_5.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_5.yaml
+new file mode 100644
+index 0000000..45b0eb9
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v28_5.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_THRESHOLD: 0.9
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31.yaml
+new file mode 100644
+index 0000000..c31b23b
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_INFERENCE_THRESHOLD: 0.6
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_2.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_2.yaml
+new file mode 100644
+index 0000000..96779ec
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_2.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_INFERENCE_THRESHOLD: 0.7
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_3.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_3.yaml
+new file mode 100644
+index 0000000..cede470
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_3.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_INFERENCE_THRESHOLD: 0.4
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_4.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_4.yaml
+new file mode 100644
+index 0000000..d80fe64
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v31_4.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v13_9.yaml"
++SEMISUPNET:
++  IOU_PRED_INFERENCE_THRESHOLD: 0.3
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36.yaml
+new file mode 100644
+index 0000000..24abf1d
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36.yaml
+@@ -0,0 +1,7 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  UNSUP_LOSS_WEIGHT_REG: 1.0
++  IOU_PRED_INFERENCE_THRESHOLD: 0.4
++  IOU_PRED_THRESHOLD: 0.75
++  WITH_IOU_PRED: True
++  WITH_IOU_PRED_ELU: True
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_2.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_2.yaml
+new file mode 100644
+index 0000000..8f546f4
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_2.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v36.yaml"
++SEMISUPNET:
++  WITH_REGR_VALUES: False
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_3.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_3.yaml
+new file mode 100644
+index 0000000..bc20872
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v36_3.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-v36_2.yaml"
++SEMISUPNET:
++  WITH_SCORE_VALUES: False
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7.yaml
+new file mode 100644
+index 0000000..992c418
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  UNSUP_LOSS_WEIGHT_REG: 1.0
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_2.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_2.yaml
+new file mode 100644
+index 0000000..7647063
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_2.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  UNSUP_LOSS_WEIGHT_REG: 2.0
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_3.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_3.yaml
+new file mode 100644
+index 0000000..a7dd564
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_3.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  UNSUP_LOSS_WEIGHT_REG: 4.0
+diff --git a/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_4.yaml b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_4.yaml
+new file mode 100644
+index 0000000..3916eb4
+--- /dev/null
++++ b/configs/coco_supervision/faster_rcnn_R_50_FPN_sup10_run1-v7_4.yaml
+@@ -0,0 +1,3 @@
++_BASE_: "faster_rcnn_R_50_FPN_sup10_run1-base.yaml"
++SEMISUPNET:
++  UNSUP_LOSS_WEIGHT_REG: 0.5
+diff --git a/ubteacher/config.py b/ubteacher/config.py
+index ef4fe0f..ee91d7d 100644
+--- a/ubteacher/config.py
++++ b/ubteacher/config.py
+@@ -38,6 +38,21 @@ def add_ubteacher_config(cfg):
+     _C.SEMISUPNET.SUP_LOSS_WEIGHT = 0.5
+     _C.SEMISUPNET.LOSS_WEIGHT_TYPE = "standard"
+ 
++    # loss regression
++    _C.SEMISUPNET.UNSUP_LOSS_WEIGHT_REG = 0.
++
++    # bbox iou branch
++    _C.SEMISUPNET.IOU_PRED_THRESHOLD = 0.5
++    _C.SEMISUPNET.IOU_PRED_INFERENCE_THRESHOLD = 0.25
++    _C.SEMISUPNET.WITH_IOU_PRED = False
++    _C.SEMISUPNET.WITH_IOU_PRED_ELU = False
++    _C.SEMISUPNET.FILTER_WITH_BBOX_IOU = True
++    _C.SEMISUPNET.WITH_SCORE_VALUES = True
++    _C.SEMISUPNET.WITH_REGR_VALUES = True
++    _C.SEMISUPNET.WITH_BBOX_IOU_REGRES = False
++    _C.SEMISUPNET.USE_SMOOTHL1 = False
++    _C.SEMISUPNET.DEBUG_BBOX_LABELS = False
++
+     # dataloader
+     # supervision level
+     _C.DATALOADER.SUP_PERCENT = 100.0  # 5 = 5% dataset as labeled set
+diff --git a/ubteacher/engine/trainer.py b/ubteacher/engine/trainer.py
+index b463428..038283c 100644
+--- a/ubteacher/engine/trainer.py
++++ b/ubteacher/engine/trainer.py
+@@ -16,8 +16,10 @@ from detectron2.utils.events import EventStorage
+ from detectron2.evaluation import COCOEvaluator, verify_results
+ from detectron2.data.dataset_mapper import DatasetMapper
+ from detectron2.engine import hooks
++from detectron2.structures import pairwise_iou
+ from detectron2.structures.boxes import Boxes
+ from detectron2.structures.instances import Instances
++from detectron2.utils.env import TORCH_VERSION
+ 
+ from ubteacher.data.build import (
+     build_detection_semisup_train_loader,
+@@ -68,6 +70,32 @@ class BaselineTrainer(DefaultTrainer):
+ 
+         self.register_hooks(self.build_hooks())
+ 
++    def resume_or_load(self, resume=True):
++        """
++        If `resume==True` and `cfg.OUTPUT_DIR` contains the last checkpoint (defined by
++        a `last_checkpoint` file), resume from the file. Resuming means loading all
++        available states (eg. optimizer and scheduler) and update iteration counter
++        from the checkpoint. ``cfg.MODEL.WEIGHTS`` will not be used.
++        Otherwise, this is considered as an independent training. The method will load model
++        weights from the file `cfg.MODEL.WEIGHTS` (but will not load other states) and start
++        from iteration 0.
++        Args:
++            resume (bool): whether to do resume or not
++        """
++        checkpoint = self.checkpointer.resume_or_load(
++            self.cfg.MODEL.WEIGHTS, resume=resume
++        )
++        if resume and self.checkpointer.has_checkpoint():
++            self.start_iter = checkpoint.get("iteration", -1) + 1
++            # The checkpoint stores the training iteration that just finished, thus we start
++            # at the next iteration (or iter zero if there's no checkpoint).
++        if isinstance(self.model, DistributedDataParallel):
++            # broadcast loaded data/model from the first rank, because other
++            # machines may not have access to the checkpoint file
++            if TORCH_VERSION >= (1, 7):
++                self.model._sync_params_and_buffers()
++            self.start_iter = comm.all_gather(self.start_iter)[0]
++
+     def train_loop(self, start_iter: int, max_iter: int):
+         """
+         Args:
+@@ -267,6 +295,32 @@ class UBTeacherTrainer(DefaultTrainer):
+ 
+         self.register_hooks(self.build_hooks())
+ 
++    def resume_or_load(self, resume=True):
++        """
++        If `resume==True` and `cfg.OUTPUT_DIR` contains the last checkpoint (defined by
++        a `last_checkpoint` file), resume from the file. Resuming means loading all
++        available states (eg. optimizer and scheduler) and update iteration counter
++        from the checkpoint. ``cfg.MODEL.WEIGHTS`` will not be used.
++        Otherwise, this is considered as an independent training. The method will load model
++        weights from the file `cfg.MODEL.WEIGHTS` (but will not load other states) and start
++        from iteration 0.
++        Args:
++            resume (bool): whether to do resume or not
++        """
++        checkpoint = self.checkpointer.resume_or_load(
++            self.cfg.MODEL.WEIGHTS, resume=resume
++        )
++        if resume and self.checkpointer.has_checkpoint():
++            self.start_iter = checkpoint.get("iteration", -1) + 1
++            # The checkpoint stores the training iteration that just finished, thus we start
++            # at the next iteration (or iter zero if there's no checkpoint).
++        if isinstance(self.model, DistributedDataParallel):
++            # broadcast loaded data/model from the first rank, because other
++            # machines may not have access to the checkpoint file
++            if TORCH_VERSION >= (1, 7):
++                self.model._sync_params_and_buffers()
++            self.start_iter = comm.all_gather(self.start_iter)[0]
++
+     @classmethod
+     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+         if output_folder is None:
+@@ -380,6 +434,47 @@ class UBTeacherTrainer(DefaultTrainer):
+             unlabel_datum["instances"] = lab_inst
+         return unlabled_data
+ 
++    def eval_label(self, gtlab, newlab):
++
++        def get_err(iou, gt_cls, new_cls, threshold):
++            filt = (iou>threshold) & (iou<threshold+0.1)
++            b_filt = len(iou[filt])
++            c_wrong = len(gt_cls[filt & (gt_cls != new_cls)])
++            return b_filt, c_wrong
++
++        logger = logging.getLogger('fvcore.common.checkpoint')
++        for gt, new in zip(gtlab, newlab):
++            if len(new) > 0:
++                b1 = gt["instances"].gt_boxes
++                b1.tensor = b1.tensor.cuda()
++                c1 = gt["instances"].gt_classes.cuda()
++                iou, idx = pairwise_iou(b1, new.gt_boxes).max(1)
++                b_wrong = len(iou[iou<0.5])
++                b_wronger = len(iou[iou<0.3])
++                b_wrongest = len(iou[iou<0.1])
++                c_wrong = b_wrong + len(c1[iou>=0.5][c1[iou>=0.5] != new.gt_classes[idx][iou>=0.5]])
++                count = float(len(iou))
++                # get error per iou range
++                err = sum([get_err(iou, c1, new.gt_classes[idx], th/10.) for th in range(0, 10)], ())
++                debug = ' '.join([str(s) for s in ["eval_labels", str(self.iter), str(len(iou)),
++                    b_wrongest, '{:.2f}'.format(b_wrongest * 100 / count),
++                    b_wronger, '{:.2f}'.format(b_wronger * 100 / count),
++                    b_wrong, '{:.2f}'.format(b_wrong * 100 / count),
++                    c_wrong, '{:.2f}'.format(c_wrong * 100 / count),
++                    ' - ', ' '.join([str(i) for i in err]), 'more']])
++                logger.info(debug)
++                b1.tensor = b1.tensor.cpu()
++                c1 = c1.cpu()
++            else:
++                count = str(len(gt["instances"].gt_boxes))
++                debug = ' '.join([str(s) for s in ["eval_labels", str(self.iter), count,
++                    count, 100.,
++                    count, 100.,
++                    count, 100.,
++                    count, 100.,
++                    ' - ', ' '.join(['0' for i in range(20)]), 'zero']])
++                logger.info(debug)
++
+     # =====================================================
+     # =================== Training Flow ===================
+     # =====================================================
+@@ -448,6 +543,12 @@ class UBTeacherTrainer(DefaultTrainer):
+             )
+             joint_proposal_dict["proposals_pseudo_roih"] = pesudo_proposals_roih_unsup_k
+ 
++            # debug pseudo labels
++            if self.cfg.SEMISUPNET.DEBUG_BBOX_LABELS:
++                self.eval_label(
++                    unlabel_data_q,
++                    joint_proposal_dict["proposals_pseudo_roih"])
++
+             #  add pseudo-label to unlabeled data
+             unlabel_data_q = self.remove_label(unlabel_data_q)
+             unlabel_data_k = self.remove_label(unlabel_data_k)
+@@ -476,13 +577,17 @@ class UBTeacherTrainer(DefaultTrainer):
+                 ]
+             record_dict.update(new_record_all_unlabel_data)
+ 
++            # define unsupervised weight regression loss
++            weight_unsup_loss_reg = self.cfg.SEMISUPNET.UNSUP_LOSS_WEIGHT_REG
++
+             # weight losses
+             loss_dict = {}
+             for key in record_dict.keys():
+                 if key[:4] == "loss":
+                     if key == "loss_rpn_loc_pseudo" or key == "loss_box_reg_pseudo":
+                         # pseudo bbox regression <- 0
+-                        loss_dict[key] = record_dict[key] * 0
++                        loss_dict[key] = record_dict[key] * \
++                                weight_unsup_loss_reg
+                     elif key[-6:] == "pseudo":  # unsupervised loss
+                         loss_dict[key] = (
+                             record_dict[key] * self.cfg.SEMISUPNET.UNSUP_LOSS_WEIGHT
+diff --git a/ubteacher/modeling/roi_heads/backports.py b/ubteacher/modeling/roi_heads/backports.py
+new file mode 100644
+index 0000000..6b1cb33
+--- /dev/null
++++ b/ubteacher/modeling/roi_heads/backports.py
+@@ -0,0 +1,162 @@
++import torch
++
++from detectron2.layers import ShapeSpec, batched_nms, cat, cross_entropy, nonzero_tuple
++from fvcore.nn import giou_loss, smooth_l1_loss
++from detectron2.modeling.box_regression import Box2BoxTransform
++from detectron2.structures import Boxes
++
++
++class FastRCNNOutputs:
++    """
++    An internal implementation that stores information about outputs of a Fast R-CNN head,
++    and provides methods that are used to decode the outputs of a Fast R-CNN head.
++    """
++
++    def __init__(
++        self,
++        box2box_transform,
++        pred_class_logits,
++        pred_proposal_deltas,
++        proposals,
++        smooth_l1_beta=0.0,
++        box_reg_loss_type="smooth_l1",
++    ):
++        """
++        Args:
++            box2box_transform (Box2BoxTransform/Box2BoxTransformRotated):
++                box2box transform instance for proposal-to-detection transformations.
++            pred_class_logits (Tensor): A tensor of shape (R, K + 1) storing the predicted class
++                logits for all R predicted object instances.
++                Each row corresponds to a predicted object instance.
++            pred_proposal_deltas (Tensor): A tensor of shape (R, K * B) or (R, B) for
++                class-specific or class-agnostic regression. It stores the predicted deltas that
++                transform proposals into final box detections.
++                B is the box dimension (4 or 5).
++                When B is 4, each row is [dx, dy, dw, dh (, ....)].
++                When B is 5, each row is [dx, dy, dw, dh, da (, ....)].
++            proposals (list[Instances]): A list of N Instances, where Instances i stores the
++                proposals for image i, in the field "proposal_boxes".
++                When training, each Instances must have ground-truth labels
++                stored in the field "gt_classes" and "gt_boxes".
++                The total number of all instances must be equal to R.
++            smooth_l1_beta (float): The transition point between L1 and L2 loss in
++                the smooth L1 loss function. When set to 0, the loss becomes L1. When
++                set to +inf, the loss becomes constant 0.
++            box_reg_loss_type (str): Box regression loss type. One of: "smooth_l1", "giou"
++        """
++        self.box2box_transform = box2box_transform
++        self.num_preds_per_image = [len(p) for p in proposals]
++        self.pred_class_logits = pred_class_logits
++        self.pred_proposal_deltas = pred_proposal_deltas
++        self.smooth_l1_beta = smooth_l1_beta
++        self.box_reg_loss_type = box_reg_loss_type
++
++        self.image_shapes = [x.image_size for x in proposals]
++
++        if len(proposals):
++            box_type = type(proposals[0].proposal_boxes)
++            # cat(..., dim=0) concatenates over all images in the batch
++            self.proposals = box_type.cat([p.proposal_boxes for p in proposals])
++            assert (
++                not self.proposals.tensor.requires_grad
++            ), "Proposals should not require gradients!"
++
++            # "gt_classes" exists if and only if training. But other gt fields may
++            # not necessarily exist in training for images that have no groundtruth.
++            if proposals[0].has("gt_classes"):
++                self.gt_classes = cat([p.gt_classes for p in proposals], dim=0)
++
++                # If "gt_boxes" does not exist, the proposals must be all negative and
++                # should not be included in regression loss computation.
++                # Here we just use proposal_boxes as an arbitrary placeholder because its
++                # value won't be used in self.box_reg_loss().
++                gt_boxes = [
++                    p.gt_boxes if p.has("gt_boxes") else p.proposal_boxes for p in proposals
++                ]
++                self.gt_boxes = box_type.cat(gt_boxes)
++        else:
++            self.proposals = Boxes(torch.zeros(0, 4, device=self.pred_proposal_deltas.device))
++        self._no_instances = len(self.proposals) == 0  # no instances found
++
++    def softmax_cross_entropy_loss(self):
++        """
++        Deprecated
++        """
++        _log_classification_stats(self.pred_class_logits, self.gt_classes)
++        return cross_entropy(self.pred_class_logits, self.gt_classes, reduction="mean")
++
++    def box_reg_loss(self):
++        """
++        Deprecated
++        """
++        if self._no_instances:
++            return 0.0 * self.pred_proposal_deltas.sum()
++
++        box_dim = self.proposals.tensor.size(1)  # 4 or 5
++        cls_agnostic_bbox_reg = self.pred_proposal_deltas.size(1) == box_dim
++        device = self.pred_proposal_deltas.device
++
++        bg_class_ind = self.pred_class_logits.shape[1] - 1
++        # Box delta loss is only computed between the prediction for the gt class k
++        # (if 0 <= k < bg_class_ind) and the target; there is no loss defined on predictions
++        # for non-gt classes and background.
++        # Empty fg_inds should produce a valid loss of zero because reduction=sum.
++        fg_inds = nonzero_tuple((self.gt_classes >= 0) & (self.gt_classes < bg_class_ind))[0]
++
++        if cls_agnostic_bbox_reg:
++            # pred_proposal_deltas only corresponds to foreground class for agnostic
++            gt_class_cols = torch.arange(box_dim, device=device)
++        else:
++            # pred_proposal_deltas for class k are located in columns [b * k : b * k + b],
++            # where b is the dimension of box representation (4 or 5)
++            # Note that compared to Detectron1,
++            # we do not perform bounding box regression for background classes.
++            gt_class_cols = box_dim * self.gt_classes[fg_inds, None] + torch.arange(
++                box_dim, device=device
++            )
++
++        if self.box_reg_loss_type == "smooth_l1":
++            gt_proposal_deltas = self.box2box_transform.get_deltas(
++                self.proposals.tensor, self.gt_boxes.tensor
++            )
++            loss_box_reg = smooth_l1_loss(
++                self.pred_proposal_deltas[fg_inds[:, None], gt_class_cols],
++                gt_proposal_deltas[fg_inds],
++                self.smooth_l1_beta,
++                reduction="sum",
++            )
++        elif self.box_reg_loss_type == "giou":
++            fg_pred_boxes = self.box2box_transform.apply_deltas(
++                self.pred_proposal_deltas[fg_inds[:, None], gt_class_cols],
++                self.proposals.tensor[fg_inds],
++            )
++            loss_box_reg = giou_loss(
++                fg_pred_boxes,
++                self.gt_boxes.tensor[fg_inds],
++                reduction="sum",
++            )
++        else:
++            raise ValueError(f"Invalid bbox reg loss type '{self.box_reg_loss_type}'")
++
++        loss_box_reg = loss_box_reg / self.gt_classes.numel()
++        return loss_box_reg
++
++    def losses(self):
++        """
++        Deprecated
++        """
++        return {"loss_cls": self.softmax_cross_entropy_loss(), "loss_box_reg": self.box_reg_loss()}
++
++    def predict_boxes(self):
++        """
++        Deprecated
++        """
++        pred = self.box2box_transform.apply_deltas(self.pred_proposal_deltas, self.proposals.tensor)
++        return pred.split(self.num_preds_per_image, dim=0)
++
++    def predict_probs(self):
++        """
++        Deprecated
++        """
++        probs = F.softmax(self.pred_class_logits, dim=-1)
++        return probs.split(self.num_preds_per_image, dim=0)
+diff --git a/ubteacher/modeling/roi_heads/fast_rcnn.py b/ubteacher/modeling/roi_heads/fast_rcnn.py
+index 31441ad..1f2af3a 100644
+--- a/ubteacher/modeling/roi_heads/fast_rcnn.py
++++ b/ubteacher/modeling/roi_heads/fast_rcnn.py
+@@ -1,19 +1,86 @@
+ # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
++import logging
+ import torch
+ from torch import nn
+ from torch.nn import functional as F
++from typing import Tuple, List
++from detectron2.structures import Boxes, Instances
++from detectron2.layers import nonzero_tuple
+ 
+ from detectron2.modeling.roi_heads.fast_rcnn import (
+     FastRCNNOutputLayers,
+-    FastRCNNOutputs,
++    fast_rcnn_inference
+ )
+ 
++try:
++    from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputs
++except ImportError:
++    from .backports import FastRCNNOutputs
++
++
+ # focal loss
+ class FastRCNNFocaltLossOutputLayers(FastRCNNOutputLayers):
+     def __init__(self, cfg, input_shape):
+         super(FastRCNNFocaltLossOutputLayers, self).__init__(cfg, input_shape)
+         self.num_classes = cfg.MODEL.ROI_HEADS.NUM_CLASSES
+ 
++        # config bbox iou branch
++        self.with_iou_pred = cfg.SEMISUPNET.WITH_IOU_PRED
++        self.iou_threshold = cfg.SEMISUPNET.IOU_PRED_THRESHOLD
++        self.iou_inference_threshold = cfg.SEMISUPNET.IOU_PRED_INFERENCE_THRESHOLD
++        self.filter_with_bbox_iou = cfg.SEMISUPNET.FILTER_WITH_BBOX_IOU
++        self.with_score_values = cfg.SEMISUPNET.WITH_SCORE_VALUES
++        self.with_iou_pred_elu = cfg.SEMISUPNET.WITH_IOU_PRED_ELU
++        self.with_regr_values = cfg.SEMISUPNET.WITH_REGR_VALUES
++        self.with_bbox_iou_regres = cfg.SEMISUPNET.WITH_BBOX_IOU_REGRES
++        self.use_smoothl1 = cfg.SEMISUPNET.USE_SMOOTHL1
++
++        if self.with_iou_pred:
++            inter_channels = input_shape.channels
++            in_channels = inter_channels
++
++            if self.with_score_values:
++                in_channels += (self.num_classes + 1)
++
++            if self.with_regr_values:
++                in_channels += (self.num_classes * 4)
++
++            if not self.with_iou_pred_elu:
++                self.iou_pred = torch.nn.Sequential(
++                    torch.nn.Linear(in_channels, inter_channels),
++                    torch.nn.Linear(inter_channels, self.num_classes + 1)
++                )
++            else:
++                self.iou_pred = torch.nn.Sequential(
++                    torch.nn.Linear(in_channels, inter_channels),
++                    nn.ELU(),
++                    torch.nn.Linear(inter_channels, self.num_classes + 1)
++                )
++
++            def init_bbox_iou_weights(m):
++                if type(m) == nn.Linear:
++                    nn.init.normal_(m.weight, std=0.01)
++                    nn.init.constant_(m.bias, 0)
++
++            self.iou_pred.apply(init_bbox_iou_weights)
++
++    def forward(self, x):
++        scores, proposal_deltas = super(FastRCNNFocaltLossOutputLayers, self).forward(x)
++
++        iou_scores = None
++        if self.with_iou_pred:
++            deltas = proposal_deltas
++
++            iou_input = x
++            if self.with_score_values:
++                iou_input = torch.cat([iou_input, scores], dim=1)
++            if self.with_regr_values:
++                iou_input = torch.cat([iou_input, deltas], dim=1)
++
++            iou_scores = self.iou_pred(iou_input)
++
++        return scores, proposal_deltas, iou_scores
++
+     def losses(self, predictions, proposals):
+         """
+         Args:
+@@ -21,7 +88,8 @@ class FastRCNNFocaltLossOutputLayers(FastRCNNOutputLayers):
+             proposals (list[Instances]): proposals that match the features
+                 that were used to compute predictions.
+         """
+-        scores, proposal_deltas = predictions
++        scores, proposal_deltas, iou_scores = predictions
++
+         losses = FastRCNNFocalLoss(
+             self.box2box_transform,
+             scores,
+@@ -30,10 +98,95 @@ class FastRCNNFocaltLossOutputLayers(FastRCNNOutputLayers):
+             self.smooth_l1_beta,
+             self.box_reg_loss_type,
+             num_classes=self.num_classes,
++            iou_threshold=self.iou_threshold,
++            iou_scores=iou_scores,
++            with_bbox_iou_regres=self.with_bbox_iou_regres,
++            use_smoothl1=self.use_smoothl1,
+         ).losses()
+ 
+         return losses
+ 
++    def inference(self, predictions: Tuple[torch.Tensor, torch.Tensor], proposals: List[Instances], branch: str = ""):
++        """
++        Args:
++            predictions: return values of :meth:`forward()`.
++            proposals (list[Instances]): proposals that match the features that were
++                used to compute predictions. The ``proposal_boxes`` field is expected.
++        Returns:
++            list[Instances]: same as `fast_rcnn_inference`.
++            list[Tensor]: same as `fast_rcnn_inference`.
++        """
++        logger = logging.getLogger('fvcore.common.checkpoint')
++        boxes = self.predict_boxes(predictions[:2], proposals)
++        scores = self.predict_probs(predictions[:2], proposals)
++        # filter by iou score
++        if len(predictions) > 2 and predictions[2] is not None:
++            iou_scores = self.predict_iou(predictions[-1], proposals)
++            if self.filter_with_bbox_iou:
++                clss = []
++                for s in scores:
++                    clss.append(s.max(1)[1] if len(s) > 0 else torch.tensor([], dtype=torch.long, device=s.device))
++                counts = [b.shape[0] for b in boxes]
++                logger.info("bbox_iou bg {}".format(sum([len(s[s==self.num_classes]) for s in clss])))
++                boxes = self.filter(boxes, iou_scores, clss)
++                logger.info("bbox_iou filtering {}".format(sum([c-b.shape[0] for (c, b) in zip(counts, boxes)])))
++                scores = self.filter(scores, iou_scores, clss)
++                iou_scores = self.filter(iou_scores, iou_scores, clss)
++
++        image_shapes = [x.image_size for x in proposals]
++
++        # only on teacher pseudo-labeling!
++        if branch == 'unsup_data_weak' and self.with_teacher_filter_preds:
++            th = self.teacher_filter_preds_min_delta
++            boxes, scores = self._filter_preds(boxes, scores, th)
++
++        instances, idxs = fast_rcnn_inference(
++            boxes,
++            scores,
++            image_shapes,
++            self.test_score_thresh,
++            self.test_nms_thresh,
++            self.test_topk_per_image,
++        )
++
++        if len(predictions) > 2 and predictions[2] is not None:
++            instances = self.add_iou_scores(iou_scores, instances, idxs)
++
++        return instances, idxs
++
++    def _filter_preds(self, boxes, scores, min_delta):
++        boxes = list(boxes)
++        scores = list(scores)
++        for idx in range(len(boxes)):
++            top2 = scores[idx].topk(2)[0]
++            filter_ = (top2[:, 0] - top2[:, 1]) > min_delta
++            boxes[idx] = boxes[idx][filter_]
++            scores[idx] = scores[idx][filter_]
++        return boxes, scores
++
++    def predict_iou(self, preds, proposals):
++        num_inst_per_image = [len(p) for p in proposals]
++        preds = preds.sigmoid()
++        return preds.split(num_inst_per_image, dim=0)
++
++    def add_iou_scores(self, iou_scores, instances, idxs):
++        for i, instance in enumerate(instances):
++            ious = iou_scores[i][idxs[i]]
++            counter = torch.arange(0, len(instance))
++            ious = ious[counter, instance.pred_classes]
++            instance.pred_iou_scores = ious
++        return instances
++
++    def filter(self, x, iou_scores, scores):
++        res = []
++        for idx, val in enumerate(x):
++            ious = iou_scores[idx][torch.arange(0, scores[idx].shape[0]), scores[idx]]
++            fit = (
++                (scores[idx] < self.num_classes) & (ious > self.iou_inference_threshold)
++            ) | (scores[idx] == self.num_classes)
++            res.append(val[fit])
++        return tuple(res)
++
+ 
+ class FastRCNNFocalLoss(FastRCNNOutputs):
+     """
+@@ -50,6 +203,10 @@ class FastRCNNFocalLoss(FastRCNNOutputs):
+         smooth_l1_beta=0.0,
+         box_reg_loss_type="smooth_l1",
+         num_classes=80,
++        iou_threshold=0.7,
++        iou_scores=None,
++        with_bbox_iou_regres=False,
++        use_smoothl1=False,
+     ):
+         super(FastRCNNFocalLoss, self).__init__(
+             box2box_transform,
+@@ -61,12 +218,25 @@ class FastRCNNFocalLoss(FastRCNNOutputs):
+         )
+         self.num_classes = num_classes
+ 
++        # bbox iou branch
++        self.iou_threshold = iou_threshold
++        self.iou_scores = iou_scores
++        self.with_bbox_iou_regres = with_bbox_iou_regres
++        self.use_smoothl1 = use_smoothl1
++
+     def losses(self):
+-        return {
++        losses = {
+             "loss_cls": self.comput_focal_loss(),
+             "loss_box_reg": self.box_reg_loss(),
+         }
+ 
++        # bbox iou branch
++        if self.iou_scores is not None:
++            loss_box_iou = self.box_iou_loss(self.gt_classes)
++            losses["loss_box_iou"] = loss_box_iou
++
++        return losses
++
+     def comput_focal_loss(self):
+         if self._no_instances:
+             return 0.0 * self.pred_class_logits.sum()
+@@ -77,9 +247,85 @@ class FastRCNNFocalLoss(FastRCNNOutputs):
+             )
+             total_loss = FC_loss(input=self.pred_class_logits, target=self.gt_classes)
+             total_loss = total_loss / self.gt_classes.shape[0]
+-
+             return total_loss
+ 
++    def build_bboxes_iou(self, gt_classes):
++        box_dim = self.proposals.tensor.size(1)  # 4 or 5
++        device = self.pred_proposal_deltas.device
++
++        bg_class_ind = self.pred_class_logits.shape[1] - 1
++
++        # Box delta loss is only computed between the prediction for the gt class k
++        # (if 0 <= k < bg_class_ind) and the target; there is no loss defined on predictions
++        # for non-gt classes and background.
++        # Empty fg_inds should produce a valid loss of zero because reduction=sum.
++        fg_inds = nonzero_tuple((gt_classes >= 0) & (gt_classes < bg_class_ind))[0]
++
++        if len(fg_inds) == 0:
++            return None, None
++
++        # pred_proposal_deltas for class k are located in columns [b * k : b * k + b],
++        # where b is the dimension of box representation (4 or 5)
++        # Note that compared to Detectron1,
++        # we do not perform bounding box regression for background classes.
++        gt_class_cols = box_dim * gt_classes[fg_inds, None] + torch.arange(
++            box_dim, device=device
++        )
++
++        fg_pred_boxes = self.box2box_transform.apply_deltas(
++            self.pred_proposal_deltas[fg_inds[:, None], gt_class_cols],
++            self.proposals.tensor[fg_inds],
++        )
++
++        return get_iou(fg_pred_boxes, self.gt_boxes.tensor[fg_inds]), fg_inds
++
++    def box_iou_loss(self, gt_classes):
++        if self._no_instances or self.iou_scores is None:
++            return 0.0 * self.pred_proposal_deltas.sum()
++
++        iou_level, fg_inds = self.build_bboxes_iou(gt_classes)
++        if iou_level is None:
++            return 0.0 * self.pred_proposal_deltas.sum()
++
++        if not self.use_smoothl1:
++            loss = FocalLoss(gamma=1.5, num_classes=1)
++        else:
++            loss = nn.SmoothL1Loss(reduction='sum')
++
++        logger = logging.getLogger('fvcore.common.checkpoint')
++        logger.info('bbox_iou loss tot_pos {} {}'.format(len(iou_level), len(iou_level[(iou_level > self.iou_threshold)])))
++
++        if self.with_bbox_iou_regres:
++            m = nn.Sigmoid()
++            loss_value = loss(m(self.iou_scores[fg_inds, gt_classes[fg_inds]]), iou_level.detach())
++            if self.use_smoothl1:
++                return loss_value / max(iou_level.numel(), 1.)
++        else:
++            # sigmoid
++            m = nn.Sigmoid()
++            loss_value = loss(m(self.iou_scores[fg_inds, gt_classes[fg_inds]]), (iou_level > self.iou_threshold).float())
++
++        return loss_value / max(gt_classes.numel(), 1.0)
++
++
++def get_iou(boxes1, boxes2):
++    x1, y1, x2, y2 = boxes1.unbind(dim=-1)
++    x1g, y1g, x2g, y2g = boxes2.unbind(dim=-1)
++
++    assert (x2 >= x1).all(), "bad box: x1 larger than x2"
++    assert (y2 >= y1).all(), "bad box: y1 larger than y2"
++
++    # Intersection keypoints
++    xkis1 = torch.max(x1, x1g)
++    ykis1 = torch.max(y1, y1g)
++    xkis2 = torch.min(x2, x2g)
++    ykis2 = torch.min(y2, y2g)
++
++    intsctk = torch.zeros_like(x1)
++    mask = (ykis2 > ykis1) & (xkis2 > xkis1)
++    intsctk[mask] = (xkis2[mask] - xkis1[mask]) * (ykis2[mask] - ykis1[mask])
++    unionk = (x2 - x1) * (y2 - y1) + (x2g - x1g) * (y2g - y1g) - intsctk
++    return intsctk / (unionk + 1e-7)
+ 
+ class FocalLoss(nn.Module):
+     def __init__(
+@@ -87,6 +333,7 @@ class FocalLoss(nn.Module):
+         weight=None,
+         gamma=1.0,
+         num_classes=80,
++        reduction='sum'
+     ):
+         super(FocalLoss, self).__init__()
+         assert gamma >= 0
+@@ -94,10 +341,17 @@ class FocalLoss(nn.Module):
+         self.weight = weight
+ 
+         self.num_classes = num_classes
++        self.reduction = reduction
+ 
+     def forward(self, input, target):
+         # focal loss
+-        CE = F.cross_entropy(input, target, reduction="none")
++        if self.num_classes > 1:
++            CE = F.cross_entropy(input, target, reduction="none")
++        else:
++            CE = F.binary_cross_entropy(input, target, reduction="none")
+         p = torch.exp(-CE)
+         loss = (1 - p) ** self.gamma * CE
++        if self.reduction == 'none':
++            return loss
+         return loss.sum()
++

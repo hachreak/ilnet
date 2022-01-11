@@ -5,6 +5,10 @@
 See [unbiased-teacher](https://github.com/facebookresearch/unbiased-teacher/tree/ba543ed)
 official pages to know the installation procedure.
 
+### Contributes
+
+To see contributes in [diff formats](contributes.diff).
+
 ### Models
 
 Most important files.
